@@ -8,7 +8,7 @@ function App() {
 					<p className="font-['Poppins']">
 						Get paid on Stacks easy from anywhere.
 					</p>
-					<h1 className="md:text-[64px] text-3xl font-bold  font-['Poppins'] mt-4 uppercase">
+					<h1 className="md:text-[64px] text-4xl font-bold  font-['Poppins'] mt-4 uppercase py-4">
 						Easy,Fast & Secure
 					</h1>
 					<p className="mt-8 font-['Space Grotesk'] font-bold uppercase">
@@ -16,7 +16,7 @@ function App() {
 					</p>
 
 					<button
-						className="bg-indigo-500 text-white font-bold uppercase p-3 px-6 relative z-10  rounded-lg mt-12 flex flex-row items-center mx-auto"
+						className="bg-indigo-500 text-white font-bold uppercase p-3 px-6 relative z-10 hover:scale-110 transition-all rounded-lg mt-12 flex flex-row items-center mx-auto"
 						style={{ flexDirection: "row" }}
 					>
 						Get paid <BsFillSendFill className="ml-4" size={24} />
