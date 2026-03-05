@@ -10,7 +10,7 @@ const index = () => {
 	const [NavLinks, setNavLinks] = useState<NavLink[]>([
 		{
 			title: "Home",
-			href: "/home",
+			href: "/",
 		},
 		{
 			title: "About",
@@ -41,12 +41,12 @@ const index = () => {
 					})}
 				</div>
 				<button
-					className="bg-indigo-500 text-white font-bold uppercase hover:scale-110 transition-all p-3 px-4 rounded-[24px] hidden md:flex flex-row items-center"
+					className="bg-green-500 text-white font-bold uppercase hover:scale-110 transition-all p-3 px-4 rounded-[24px] hidden md:flex flex-row items-center"
 					style={{ flexDirection: "row" }}
 				>
 					Get Started <SiWhatsapp className="ml-4" size={24} />
 				</button>
-				<button className="bg-indigo-500 text-white font-bold uppercase p-3 px-4 block md:hidden rounded-lg flex flex-row items-center">
+				<button className="bg-green-500 text-white font-bold uppercase p-3 px-4 block md:hidden rounded-lg flex flex-row items-center">
 					<SiWhatsapp size={28} />
 				</button>
 			</div>

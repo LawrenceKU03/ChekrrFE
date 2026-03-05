@@ -2,13 +2,13 @@ import { BsFillSendFill } from "react-icons/bs";
 
 function App() {
 	return (
-		<div className="h-[85vh] bg-white">
+		<div className="h-[85vh] bg-[url('/bg.svg')]">
 			<div className="w-full mh-[80%]  my-auto md:flex block flex-row justify-center items-center p-10">
 				<div className="w-full text-center mt-12">
 					<p className="font-['Poppins']">
 						Get paid on Stacks easy from anywhere.
 					</p>
-					<h1 className="md:text-[64px] text-4xl font-bold  font-['Poppins'] mt-4 uppercase py-4">
+					<h1 className="md:text-[64px] text-6xl font-bold  font-['Righteous'] mt-4 uppercase py-4">
 						Easy,Fast & Secure
 					</h1>
 					<p className="mt-8 font-['Space Grotesk'] font-bold uppercase">
