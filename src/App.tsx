@@ -5,14 +5,12 @@ function App() {
 		<div className="h-[85vh] bg-[url('/bg.svg')]">
 			<div className="w-full mh-[80%]  my-auto md:flex block flex-row justify-center items-center p-10">
 				<div className="w-full text-center mt-12">
-					<p className="font-['Poppins']">
-						Get paid on Stacks easy from anywhere.
-					</p>
+					<p className="font-['Poppins']">Get paid on Stacks from anywhere.</p>
 					<h1 className="md:text-[64px] text-6xl font-bold  font-['Righteous'] mt-4 uppercase py-4">
 						Easy,Fast & Secure
 					</h1>
 					<p className="mt-8 font-['Space Grotesk'] font-bold uppercase">
-						Prompt,Send links and get paid all on whatsapp.
+						From product to payout,do it all with Chekrr on WhatsApp.
 					</p>
 
 					<button
