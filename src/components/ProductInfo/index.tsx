@@ -19,10 +19,10 @@ const index: React.FC<ProductInfo> = ({
 }) => {
 	return (
 		<div className="md:w-[25%] w-[330px] p-4 shadow-md  rounded-[18px] mx-auto md:mr-[14%]">
-			<div
+			<img
 				className="w-full h-[150px] rounded-lg mb-2 bg-cover bg-center"
-				style={{ backgroundImage: `url('${productImgUrl}')` }}
-			></div>
+				src={productImgUrl}
+			/>
 			<div>
 				<h1 className="text-2xl font-bold font-['Poppins'] mb-2">{title}</h1>
 				<p className="font-['Poppins'] mb-4 text-gray-500 text-[14px]">

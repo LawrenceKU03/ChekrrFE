@@ -4,7 +4,14 @@ import { FaCcStripe } from "react-icons/fa";
 import { FaBitcoin } from "react-icons/fa";
 import { BsCoin } from "react-icons/bs";
 
-const index: React.FC = () => {
+
+interface MainCheckoutProps {
+	owner_name: string;
+	store_name: string;
+	price: string:
+}
+
+const index: React.FC<MainCheckoutProps> = ({ owner_name, store_name, price }) => {
 	return (
 		<div className="md:w-[50%] md:ml-[-10%] w-full md:p-0 p-4 md:mt-0 mt-6 md:pb-0 pb-24">
 			<h1 className="text-3xl font-bold capitalize font-['Poppins']">
@@ -17,7 +24,7 @@ const index: React.FC = () => {
 				Merchant Information
 			</h3>
 			<div>
-				<p className="text-gray-500 mt-2">David Sung * Legs Luxury</p>
+				<p className="text-gray-500 mt-2">{`${owner_name} * ${store_name}`}</p>
 			</div>
 
 			<h3 className="text-2xl font-semibold capitalize font-['Poppins'] mt-8">
