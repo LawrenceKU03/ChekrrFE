@@ -3,7 +3,7 @@ import { FaBitcoin } from "react-icons/fa";
 
 const index = () => {
 	return (
-		<div className="bg-indigo-500 py-10 fixed bottom-0 w-full flex flex-row items-center justify-center">
+		<div className="bg-indigo-500 py-10 fixed bottom-0 w-full flex flex-row z-10 items-center justify-center">
 			<p className="mx-auto text-white flex flex-row items-center">
 				Made with <FaHeart className="mx-2" /> by{" "}
 				<b className="ml-2">Ghost@BUIDLBATTLE2</b>

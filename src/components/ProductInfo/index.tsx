@@ -5,7 +5,7 @@ interface ProductInfo {
 	desc: string;
 	usdAmount: number;
 	productImgUrl: string;
-	timeStamp: string;
+	status: string;
 	storeName: string;
 }
 
@@ -14,13 +14,13 @@ const index: React.FC<ProductInfo> = ({
 	desc,
 	usdAmount,
 	productImgUrl,
-	timeStamp,
+	status,
 	storeName,
 }) => {
 	return (
 		<div className="md:w-[25%] w-[330px] p-4 shadow-md  rounded-[18px] mx-auto md:mr-[14%]">
 			<img
-				className="w-full h-[150px] rounded-lg mb-2 bg-cover bg-center"
+				className="w-[350px] h-[200px] rounded-lg mb-2 object-contain object-center mx-auto rounded-lg"
 				src={productImgUrl}
 			/>
 			<div>
@@ -38,10 +38,10 @@ const index: React.FC<ProductInfo> = ({
 				<hr />
 				<div className="flex flex-row items-center w-full justify-between mt-3">
 					<p className="font-['Poppins'] text-gray-500 text-[13px]">
-						Payment link generated @
+						Payment Status
 					</p>
 					<p className="font-semibold font-['Poppins']  text-[13px]">
-						{timeStamp}
+						{status}
 					</p>
 				</div>
 				<hr />
