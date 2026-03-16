@@ -7,12 +7,14 @@ import { useState } from "react";
 import useStripeCheckout from "../../hooks/useStripeCheckout";
 import { useSearchParams } from "react-router";
 import { twMerge } from "tailwind-merge";
+import toast from "react-hot-toast";
 
 interface MainCheckoutProps {
 	owner_name: string;
 	store_name: string;
 	price: string;
 	is_paid: boolean;
+	onStripeBtnClick: () => Promise<void>;
 }
 
 const index: React.FC<MainCheckoutProps> = ({
@@ -20,15 +22,30 @@ const index: React.FC<MainCheckoutProps> = ({
 	store_name,
 	price,
 	is_paid,
+	onStripeBtnClick,
 }) => {
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState(null);
 	const stripeCheckout = useStripeCheckout();
 	const [searchParams] = useSearchParams();
 	const session_id = searchParams.get("session_id");
 
 	const [firstName, setFirstName] = useState<string | null>(null);
 	const [lastName, setLastName] = useState<string | null>(null);
+
+	const requiredFieldFilled = async () => {
+		if (firstName != "" && firstName) {
+			if (lastName != "" && lastName) {
+				await onStripeBtnClick(firstName, lastName);
+				console.log(firstName, lastName);
+				return true;
+			} else {
+				toast.error("Last Name Required");
+				return false;
+			}
+		} else {
+			toast.error("First Name Required");
+			return false;
+		}
+	};
 
 	return (
 		<div className="md:w-[50%] md:ml-[-10%] w-full md:p-0 p-4 md:mt-0 mt-6 md:pb-0 pb-24">
@@ -50,14 +67,12 @@ const index: React.FC<MainCheckoutProps> = ({
 			</h3>
 			<div>
 				<input
-					value={firstName}
 					type="text"
 					placeholder="First Name(required)"
 					className="md:w-[40%] w-full p-2 rounded-lg border-2 my-2 md:mr-2"
 					onChange={(e) => setFirstName(e.target.value)}
 				/>
 				<input
-					value={lastName}
 					type="text"
 					placeholder="Last Name(required)"
 					className="md:w-[40%] w-full p-2 rounded-lg border-2 my-2 md:mx-2 "
@@ -90,7 +105,11 @@ const index: React.FC<MainCheckoutProps> = ({
 			</div>
 			<button
 				disabled={(session_id || is_paid) && true}
-				onClick={() => stripeCheckout.setStripeCheckoutStatus(true)}
+				onClick={() => {
+					if (requiredFieldFilled()) {
+						stripeCheckout.setStripeCheckoutStatus(true);
+					}
+				}}
 				className={twMerge(
 					"md:w-[81%] w-full flex flex-row items-center justify-center p-2 rounded-lg border-none my-2 mr-2 text-white bg-indigo-500 font-bold",
 					(session_id || is_paid) && "opacity-75",

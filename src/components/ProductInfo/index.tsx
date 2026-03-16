@@ -3,7 +3,7 @@ import type React from "react";
 interface ProductInfo {
 	title: string;
 	desc: string;
-	usdAmount: number;
+	usdAmount: string;
 	productImgUrl: string;
 	status: string;
 	storeName: string;

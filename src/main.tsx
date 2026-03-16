@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import { Toaster } from "react-hot-toast";
 
 import App from "./App.tsx";
 import Checkout from "./pages/Checkout";
@@ -12,6 +13,7 @@ import Footer from "./components/Footer";
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
 		<BrowserRouter>
+			<Toaster />
 			<Header />
 			<Routes>
 				<Route index path="/" element={<App />} />
