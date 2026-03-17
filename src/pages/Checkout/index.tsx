@@ -57,16 +57,20 @@ const index: React.FC = () => {
 
 			return;
 		}
+	};
 
-	}
-
-	const createStripeCheckoutSession=async (firstNameField:string,lastNameField:string)=>{
+	const createStripeCheckoutSession = async (
+		firstNameField: string,
+		lastNameField: string,
+	) => {
 		const res_stripe = await axios.post(
 			"http://localhost:8000/payment/stripe/",
 			{
-				amount: parseFloat(productData?.price as string),
-				firstName:firstNameField,
-				lastName:lastNameField,
+				amount:
+					parseFloat(productData?.price as string) *
+					parseInt(productData?.quantity as string),
+				firstName: firstNameField,
+				lastName: lastNameField,
 				product_data: productData,
 				type: "PENDING",
 			},
@@ -88,27 +92,29 @@ const index: React.FC = () => {
 
 	return (
 		<div className=" bg-white h-full w-full py-6 flex md:flex-row flex-col items-start justify-center overflow-y-scroll">
-	<ProductInfo
-					title={productData?.title as string}
-					usdAmount={productData?.price as string}
-					storeName={productData?.store_name as string}
-					productImgUrl={`data:image/*;base64,${productData?.image as string}`}
-					desc={productData?.description as string}
-					status={productData?.is_paid || session_id ? "PAID" : "PENDING"}
-				/>
-				<MainCheckout
-					owner_name={productData?.owner_name as string}
-					store_name={productData?.store_name as string}
-					price={productData?.price as string}
-					is_paid={productData?.is_paid as boolean}
-					onStripeBtnClick={createStripeCheckoutSession}
-				/>
-				{stripeCheckout.isStripeCheckoutClicked && (
-		<EmbeddedCheckoutProvider
-				stripe={stripePromise}
-				options={{ clientSecret: stripeClientSecret }}
-			>
-				
+			<ProductInfo
+				title={productData?.title as string}
+				usdAmount={productData?.price as string}
+				storeName={productData?.store_name as string}
+				productImgUrl={`data:image/*;base64,${productData?.image as string}`}
+				desc={productData?.description as string}
+				quantity={productData?.quantity}
+				status={productData?.is_paid || session_id ? "PAID" : "PENDING"}
+			/>
+			<MainCheckout
+				owner_name={productData?.owner_name as string}
+				store_name={productData?.store_name as string}
+				price={productData?.price as string}
+				is_paid={productData?.is_paid as boolean}
+				quantity={productData?.quantity}
+				onStripeBtnClick={createStripeCheckoutSession}
+				productData={productData}
+			/>
+			{stripeCheckout.isStripeCheckoutClicked && (
+				<EmbeddedCheckoutProvider
+					stripe={stripePromise}
+					options={{ clientSecret: stripeClientSecret }}
+				>
 					<div className="w-full h-max absolute backdrop-blur-md z-50 r-0">
 						<FaCircleXmark
 							size={30}
@@ -119,10 +125,9 @@ const index: React.FC = () => {
 							<EmbeddedCheckout />
 						</div>
 					</div>
-		</EmbeddedCheckoutProvider>
-
-				)}
-			</div>
+				</EmbeddedCheckoutProvider>
+			)}
+		</div>
 	);
 };
 

@@ -1,6 +1,11 @@
 import { BsFillSendFill } from "react-icons/bs";
 
 function App() {
+	const redirect = () => {
+		window.location.href =
+			"https://wa.me/14155238886?text=join%20group-western";
+	};
+
 	return (
 		<div className="h-[85vh] bg-[url('/bg.svg')]">
 			<div className="w-full mh-[80%]  my-auto md:flex block flex-row justify-center items-center p-10">
@@ -14,6 +19,7 @@ function App() {
 					</p>
 
 					<button
+						onClick={() => redirect()}
 						className="bg-indigo-500 text-white font-bold uppercase p-3 px-6 relative z-10 hover:scale-110 transition-all rounded-lg mt-12 flex flex-row items-center mx-auto"
 						style={{ flexDirection: "row" }}
 					>

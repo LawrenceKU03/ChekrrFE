@@ -1,4 +1,5 @@
 import type React from "react";
+import useStacksWallet from "../../hooks/useStacksWallet";
 
 interface ProductInfo {
 	title: string;
@@ -7,6 +8,7 @@ interface ProductInfo {
 	productImgUrl: string;
 	status: string;
 	storeName: string;
+	quantity: string;
 }
 
 const index: React.FC<ProductInfo> = ({
@@ -16,7 +18,11 @@ const index: React.FC<ProductInfo> = ({
 	productImgUrl,
 	status,
 	storeName,
+	quantity,
 }) => {
+
+	const stackWallet=useStacksWallet();
+
 	return (
 		<div className="md:w-[25%] w-[330px] p-4 shadow-md  rounded-[18px] mx-auto md:mr-[14%]">
 			<img
@@ -30,7 +36,9 @@ const index: React.FC<ProductInfo> = ({
 				</p>
 
 				<div className="flex flex-row items-center w-full justify-between">
-					<p className="font-['Poppins'] text-gray-500  text-[13px]">Price </p>
+					<p className="font-['Poppins'] text-gray-500  text-[13px]">
+						Unit Price
+					</p>
 					<p className="font-semibold font-['Poppins']  text-[13px]">
 						${usdAmount}
 					</p>
@@ -41,9 +49,19 @@ const index: React.FC<ProductInfo> = ({
 						Payment Status
 					</p>
 					<p className="font-semibold font-['Poppins']  text-[13px]">
-						{status}
+						{stackWallet.isPaid ? "PAID" : status}
 					</p>
 				</div>
+				<hr />
+				<div className="flex flex-row items-center w-full justify-between mt-3">
+					<p className="font-['Poppins'] text-gray-500  text-[13px]">
+						Quantity
+					</p>
+					<p className="font-semibold font-['Poppins']  text-[13px]">
+						{quantity}
+					</p>
+				</div>
+
 				<hr />
 				<div className="flex flex-row items-center w-full justify-between mt-3">
 					<p className="font-['Poppins'] text-gray-500  text-[13px]">Store</p>

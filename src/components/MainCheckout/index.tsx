@@ -9,12 +9,28 @@ import { useSearchParams } from "react-router";
 import { twMerge } from "tailwind-merge";
 import toast from "react-hot-toast";
 
+import useStacksWallet from "../../hooks/useStacksWallet";
+
+interface Product {
+	title: string;
+	description: string;
+	image: string;
+	price: string;
+	quantity: number;
+	owner_name: string;
+	store_name: string;
+	product_hash: string;
+	is_paid: boolean;
+}
+
 interface MainCheckoutProps {
 	owner_name: string;
 	store_name: string;
 	price: string;
 	is_paid: boolean;
 	onStripeBtnClick: () => Promise<void>;
+	quantity: string;
+	productData: Product;
 }
 
 const index: React.FC<MainCheckoutProps> = ({
@@ -23,8 +39,12 @@ const index: React.FC<MainCheckoutProps> = ({
 	price,
 	is_paid,
 	onStripeBtnClick,
+	quantity,
+	productData,
 }) => {
 	const stripeCheckout = useStripeCheckout();
+	const stackWallet = useStacksWallet();
+
 	const [searchParams] = useSearchParams();
 	const session_id = searchParams.get("session_id");
 
@@ -35,6 +55,21 @@ const index: React.FC<MainCheckoutProps> = ({
 		if (firstName != "" && firstName) {
 			if (lastName != "" && lastName) {
 				await onStripeBtnClick(firstName, lastName);
+				console.log(firstName, lastName);
+				return true;
+			} else {
+				toast.error("Last Name Required");
+				return false;
+			}
+		} else {
+			toast.error("First Name Required");
+			return false;
+		}
+	};
+
+	const requiredFieldFilledUSDcx = async () => {
+		if (firstName != "" && firstName) {
+			if (lastName != "" && lastName) {
 				console.log(firstName, lastName);
 				return true;
 			} else {
@@ -85,26 +120,49 @@ const index: React.FC<MainCheckoutProps> = ({
 			</h3>
 			<div className="flex flex-row items-center ">
 				<button
-					disabled={(session_id || is_paid) && true}
+					disabled={(session_id || is_paid || stackWallet.isPaid) && true}
 					className={twMerge(
 						"md:w-[40%] w-full flex flex-row items-center justify-center p-2 rounded-lg border-none my-2 mr-2 text-white bg-indigo-500 font-bold",
-						(session_id || is_paid) && "opacity-75",
+						(session_id || is_paid || stackWallet.isPaid) && "opacity-75",
 					)}
 				>
 					Pay via sBtc <FaBitcoin size={24} className="ml-4" />
 				</button>
 				<button
-					disabled={(session_id || is_paid) && true}
+					disabled={(session_id || is_paid || stackWallet.isPaid) && true}
 					className={twMerge(
 						"md:w-[40%] w-full flex flex-row items-center justify-center p-2 rounded-lg border-none my-2 mr-2 text-white bg-indigo-500 font-bold",
-						(session_id || is_paid) && "opacity-75",
+						(session_id ||
+							is_paid ||
+							stackWallet.connectionStatus ||
+							stackWallet.isPaid) &&
+							(stackWallet.connectionStatus ? "bg-green-500" : "opacity-75"),
 					)}
+					onClick={async () => {
+						if (stackWallet.connectionStatus) {
+							stackWallet.sendUSDCx(
+								price * parseInt(quantity),
+								firstName,
+								lastName,
+								productData,
+							);
+							return;
+						}
+
+						const isValid = await requiredFieldFilledUSDcx();
+						if (isValid) {
+							stackWallet.connectWallet();
+						}
+					}}
 				>
-					Pay via USDCx <BsCoin size={24} className="ml-4" />
+					{stackWallet.connectionStatus
+						? `Pay ${price * parseInt(quantity)} USDCx`
+						: "Pay via USDCx"}{" "}
+					<BsCoin size={24} className="ml-4" />
 				</button>
 			</div>
 			<button
-				disabled={(session_id || is_paid) && true}
+				disabled={(session_id || is_paid || stackWallet.isPaid) && true}
 				onClick={() => {
 					if (requiredFieldFilled()) {
 						stripeCheckout.setStripeCheckoutStatus(true);
@@ -112,7 +170,7 @@ const index: React.FC<MainCheckoutProps> = ({
 				}}
 				className={twMerge(
 					"md:w-[81%] w-full flex flex-row items-center justify-center p-2 rounded-lg border-none my-2 mr-2 text-white bg-indigo-500 font-bold",
-					(session_id || is_paid) && "opacity-75",
+					(session_id || is_paid || stackWallet.isPaid) && "opacity-75",
 				)}
 			>
 				Pay with Stripe <FaCcStripe size={24} className="ml-4" />

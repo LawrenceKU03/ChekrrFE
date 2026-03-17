@@ -22,6 +22,11 @@ const index = () => {
 		},
 	]);
 
+	const redirect = () => {
+		window.location.href =
+			"https://wa.me/14155238886?text=join%20group-western";
+	};
+
 	return (
 		<div className="bg-white flex flex-col shadow-[0_2px_2px_rgba(0,0,0,0.1)] relative z-5">
 			<div className="flex flex-row items-center justify-between md:px-24 md:py-6 py-6 px-4">
@@ -43,10 +48,14 @@ const index = () => {
 				<button
 					className="bg-green-500 text-white font-bold uppercase hover:scale-110 transition-all p-3 px-4 rounded-[24px] hidden md:flex flex-row items-center"
 					style={{ flexDirection: "row" }}
+					onClick={() => redirect()}
 				>
 					Get Started <SiWhatsapp className="ml-4" size={24} />
 				</button>
-				<button className="bg-green-500 text-white font-bold uppercase p-3 px-4 block md:hidden rounded-lg flex flex-row items-center">
+				<button
+					className="bg-green-500 text-white font-bold uppercase p-3 px-4 block md:hidden rounded-lg flex flex-row items-center"
+					onClick={() => redirect()}
+				>
 					<SiWhatsapp size={28} />
 				</button>
 			</div>

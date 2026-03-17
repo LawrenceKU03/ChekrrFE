@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@stacks/connect": "^8.2.6",
+    "@stacks/network": "^7.3.1",
+    "@stacks/transactions": "^7.3.1",
     "@stripe/react-stripe-js": "^5.6.1",
     "@stripe/stripe-js": "^8.9.0",
     "axios": "^1.13.6",
