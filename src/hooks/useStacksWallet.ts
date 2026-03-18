@@ -20,6 +20,10 @@ const USDCX_CONTRACT_ADDRESS = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
 const USDCX_CONTRACT_NAME = "usdcx";
 const USDCX_ASSET_NAME = "usdcx-token";
 
+const SBTC_CONTRACT_ADDRESS = "ST1F7QA2MDF17S807EPA36TSS8AMEFY4KA9TVGWXT";
+const SBTC_CONTRACT_NAME = "sbtc-token";
+const SBTC_ASSET_NAME = "sbtc";
+
 const MASTER_WALLET_ESCROW_ADDRESS =
 	"ST3K9XTZK3Q7P3WJ593G9GKMZZY57BCKFZQY46WZH";
 
@@ -38,26 +42,47 @@ interface Product {
 interface useStacksWalletProps {
 	connectionStatus: boolean;
 	connectedAddress: string | null;
-	isPaid:boolean;
-	connectWallet: () => void;
+	isPaid: boolean;
+	connectIntentType: string | null;
+	connectWallet: (connectionType: string) => void;
 	disconnectWallet: () => void;
-	sendUSDCx: (amount: number,firstName:string,lastName:string,productData:Product) => Promise<void>;
+	sendUSDCx: (
+		amount: number,
+		firstName: string,
+		lastName: string,
+		productData: Product,
+	) => Promise<void>;
+	sendsBTC: (
+		amount: number,
+		firstName: string,
+		lastName: string,
+		productData: Product,
+	) => Promise<void>;
 }
+
+const sBTC_MOCK_DATA_PRICE = 74255;
+
+const usdcxToSBTC = async (usdcxAmount: number) => {
+	return usdcxAmount / sBTC_MOCK_DATA_PRICE; // e.g. $100 / $60000 = 0.00166667 sBTC
+};
 
 const useStacksWallet = create<useStacksWalletProps>((set, get) => ({
 	connectionStatus: false,
 	connectedAddress: null,
-	isPaid:false,
-	connectWallet: async () => {
+	isPaid: false,
+	connectIntentType: null,
+	connectWallet: async (connectionType: string) => {
 		const connected = isConnected();
 		if (!connected) {
 			const res = await connect();
 			const stxAddress = res.addresses.find((a) => a.symbol === "STX")?.address;
-
+			set(() => ({ connectIntentType: connectionType }));
 			set(() => ({ connectionStatus: true, connectedAddress: stxAddress }));
 		} else {
 			const res = await connect();
 			const stxAddress = res.addresses.find((a) => a.symbol === "STX")?.address;
+
+			set(() => ({ connectIntentType: connectionType }));
 
 			set(() => ({ connectionStatus: true, connectedAddress: stxAddress }));
 		}
@@ -65,9 +90,17 @@ const useStacksWallet = create<useStacksWalletProps>((set, get) => ({
 	disconnectWallet: async () => {
 		if (!isConnected()) {
 			disconnect();
-			set(() => ({ connectionStatus: true, connectedAddress: null }));
+			set(() => ({
+				connectionStatus: true,
+				connectedAddress: null,
+				connectIntentType: null,
+			}));
 		} else {
-			set(() => ({ connectionStatus: false, connectedAddress: null }));
+			set(() => ({
+				connectionStatus: false,
+				connectedAddress: null,
+				connectIntentType: null,
+			}));
 		}
 	},
 	sendUSDCx: async (
@@ -76,7 +109,6 @@ const useStacksWallet = create<useStacksWalletProps>((set, get) => ({
 		lastName: string,
 		productData: Product,
 	) => {
-		// amount is in micros — 1 USDCx = 1_000_000
 		const microAmount = amount * 1_000_000;
 		const senderAddress = get().connectedAddress as string; // swap for .testnet if on testnet
 
@@ -106,10 +138,8 @@ const useStacksWallet = create<useStacksWalletProps>((set, get) => ({
 				icon: window.location.origin + "/favicon.ico",
 			},
 			onFinish: async (data) => {
-				set(()=>({ isPaid:true }));
+				toast.loading("Processing estimated 1-2 minutes", { duration: 5000 });
 
-				toast.success("Payment Successful!")
-				
 				const res = await axios.post(
 					"http://localhost:8000/payment/onchain_payment/",
 					{
@@ -117,11 +147,72 @@ const useStacksWallet = create<useStacksWalletProps>((set, get) => ({
 						firstName: firstName,
 						lastName: lastName,
 						product_data: productData,
-						type:"PAID"
+						type: "PAID",
+						payment_method: "USDCx",
 					},
 				);
-				console.log("TX broadcasted:", data.txId);
-// call your Django backend here to record the transaction
+
+				set(() => ({ isPaid: true }));
+
+				toast.success("Payment Successful!");
+			},
+			onCancel: () => {
+				console.log("User cancelled");
+			},
+		});
+	},
+	sendsBTC: async (
+		amountUSDCx: number,
+		firstName: string,
+		lastName: string,
+		productData: Product,
+	) => {
+		const amount = await usdcxToSBTC(amountUSDCx);
+		const satoshiAmount = Math.floor(amount * 1_0000_0000); // ✅ defined here
+		const senderAddress = get().connectedAddress as string; // swap for .testnet if on testnet
+
+		openContractCall({
+			contractAddress: SBTC_CONTRACT_ADDRESS,
+			contractName: SBTC_CONTRACT_NAME,
+			functionName: "transfer",
+			functionArgs: [
+				uintCV(satoshiAmount),
+				principalCV(senderAddress),
+				principalCV(MASTER_WALLET_ESCROW_ADDRESS),
+				noneCV(),
+			],
+			network: STACKS_TESTNET,
+			postConditionMode: PostConditionMode.Deny,
+			postConditions: [
+				Pc.principal(senderAddress)
+					.willSendEq(satoshiAmount)
+					.ft(
+						`${SBTC_CONTRACT_ADDRESS}.${SBTC_CONTRACT_NAME}`,
+						SBTC_ASSET_NAME,
+					),
+			],
+			appDetails: {
+				name: "Chekrr",
+				icon: window.location.origin + "/favicon.ico",
+			},
+			onFinish: async (data) => {
+				toast.loading("Processing estimated 1-2 minutes", { duration: 5000 });
+
+				const res = await axios.post(
+					"http://localhost:8000/payment/onchain_payment/",
+					{
+						tx_id: data.txId, // 👈 also send txId so backend can verify
+						amount: amount,
+						sBTCAmount: amount,
+						firstName: firstName,
+						lastName: lastName,
+						product_data: productData,
+						type: "PAID",
+						payment_method: "SBTC", // 👈 so backend knows to settle in USDCx
+					},
+				);
+				set(() => ({ isPaid: true }));
+				toast.success("Payment Successful!");
 			},
 			onCancel: () => {
 				console.log("User cancelled");

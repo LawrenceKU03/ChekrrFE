@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { FaCcStripe } from "react-icons/fa";
 import { FaBitcoin } from "react-icons/fa";
@@ -10,6 +10,7 @@ import { twMerge } from "tailwind-merge";
 import toast from "react-hot-toast";
 
 import useStacksWallet from "../../hooks/useStacksWallet";
+import axios from "axios";
 
 interface Product {
 	title: string;
@@ -33,6 +34,8 @@ interface MainCheckoutProps {
 	productData: Product;
 }
 
+const sBTC_MOCK_DATA_PRICE = 74255;
+
 const index: React.FC<MainCheckoutProps> = ({
 	owner_name,
 	store_name,
@@ -50,6 +53,7 @@ const index: React.FC<MainCheckoutProps> = ({
 
 	const [firstName, setFirstName] = useState<string | null>(null);
 	const [lastName, setLastName] = useState<string | null>(null);
+	const [sBTCAmount,setsBTCAmount] = useState<number>(0);
 
 	const requiredFieldFilled = async () => {
 		if (firstName != "" && firstName) {
@@ -67,7 +71,21 @@ const index: React.FC<MainCheckoutProps> = ({
 		}
 	};
 
-	const requiredFieldFilledUSDcx = async () => {
+	
+const usdcxToSBTC =(usdcxAmount: number)=> {
+	return usdcxAmount / sBTC_MOCK_DATA_PRICE
+	; // e.g. $100 / $60000 = 0.00166667 sBTC
+};
+
+
+const convertsBTC=()=>{
+	const sbtc_val=usdcxToSBTC(parseInt(quantity) * price);
+	console.log(sbtc_val);
+	setsBTCAmount(sbtc_val);
+}
+
+
+	const requiredFieldFilledOnchain= async () => {
 		if (firstName != "" && firstName) {
 			if (lastName != "" && lastName) {
 				console.log(firstName, lastName);
@@ -81,6 +99,10 @@ const index: React.FC<MainCheckoutProps> = ({
 			return false;
 		}
 	};
+
+	useEffect(()=>{
+		convertsBTC();
+	},[]);
 
 	return (
 		<div className="md:w-[50%] md:ml-[-10%] w-full md:p-0 p-4 md:mt-0 mt-6 md:pb-0 pb-24">
@@ -123,10 +145,28 @@ const index: React.FC<MainCheckoutProps> = ({
 					disabled={(session_id || is_paid || stackWallet.isPaid) && true}
 					className={twMerge(
 						"md:w-[40%] w-full flex flex-row items-center justify-center p-2 rounded-lg border-none my-2 mr-2 text-white bg-indigo-500 font-bold",
-						(session_id || is_paid || stackWallet.isPaid) && "opacity-75",
+						(session_id || is_paid || stackWallet.isPaid) && (stackWallet.connectionStatus && stackWallet.connectIntentType == "sBTC"? "bg-green-500" : stackWallet.isPaid && "opacity-75"),
 					)}
+
+					onClick={async () => {
+						if (stackWallet.connectionStatus) {
+							stackWallet.sendsBTC(
+								price * parseInt(quantity),
+								firstName,
+								lastName,
+								productData,
+							);
+							return;
+						}
+
+						const isValid = await requiredFieldFilledOnchain();
+						if (isValid) {
+							stackWallet.connectWallet("sBTC");
+						}
+					}}
+
 				>
-					Pay via sBtc <FaBitcoin size={24} className="ml-4" />
+				{stackWallet.connectionStatus ? `Pay ${((parseInt(quantity) * price)/sBTC_MOCK_DATA_PRICE).toFixed(8)} sBTC` :`Pay via sBtc`} <FaBitcoin size={24} className="ml-4" />
 				</button>
 				<button
 					disabled={(session_id || is_paid || stackWallet.isPaid) && true}
@@ -136,7 +176,7 @@ const index: React.FC<MainCheckoutProps> = ({
 							is_paid ||
 							stackWallet.connectionStatus ||
 							stackWallet.isPaid) &&
-							(stackWallet.connectionStatus ? "bg-green-500" : "opacity-75"),
+							(stackWallet.connectionStatus && stackWallet.connectIntentType == "USDCx"? "bg-green-500" : stackWallet.isPaid && "opacity-75"),
 					)}
 					onClick={async () => {
 						if (stackWallet.connectionStatus) {
@@ -149,9 +189,9 @@ const index: React.FC<MainCheckoutProps> = ({
 							return;
 						}
 
-						const isValid = await requiredFieldFilledUSDcx();
+						const isValid = await requiredFieldFilledOnchain();
 						if (isValid) {
-							stackWallet.connectWallet();
+							stackWallet.connectWallet("USDCx");
 						}
 					}}
 				>
@@ -170,7 +210,7 @@ const index: React.FC<MainCheckoutProps> = ({
 				}}
 				className={twMerge(
 					"md:w-[81%] w-full flex flex-row items-center justify-center p-2 rounded-lg border-none my-2 mr-2 text-white bg-indigo-500 font-bold",
-					(session_id || is_paid || stackWallet.isPaid) && "opacity-75",
+					(session_id || is_paid || stackWallet.isPaid) &&  "opacity-75",
 				)}
 			>
 				Pay with Stripe <FaCcStripe size={24} className="ml-4" />
