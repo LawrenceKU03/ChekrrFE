@@ -84,9 +84,6 @@ const index: React.FC<MainCheckoutProps> = ({
 		}
 	};
 
-	useEffect(() => {
-		convertsBTC();
-	}, []);
 
 
 	return (
