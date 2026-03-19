@@ -7,7 +7,7 @@ interface NavLink {
 }
 
 const index = () => {
-	const [NavLinks, setNavLinks] = useState<NavLink[]>([
+	const [NavLinks] = useState<NavLink[]>([
 		{
 			title: "Home",
 			href: "/",

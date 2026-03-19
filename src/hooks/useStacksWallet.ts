@@ -148,7 +148,7 @@ const useStacksWallet = create<useStacksWalletProps>((set, get) => ({
 						lastName: lastName,
 						product_data: productData,
 						type: "PAID",
-						payment_method: "USDCx",
+						payment_method: get().connectIntentType,
 					},
 				);
 
@@ -202,13 +202,13 @@ const useStacksWallet = create<useStacksWalletProps>((set, get) => ({
 					"http://localhost:8000/payment/onchain_payment/",
 					{
 						tx_id: data.txId, // 👈 also send txId so backend can verify
-						amount: amount,
-						sBTCAmount: amount,
+						amount: amountUSDCx,
+						sBTCAmount: amount.toFixed(8),
 						firstName: firstName,
 						lastName: lastName,
 						product_data: productData,
 						type: "PAID",
-						payment_method: "SBTC", // 👈 so backend knows to settle in USDCx
+						payment_method: get().connectIntentType, // 👈 so backend knows to settle in USDCx
 					},
 				);
 				set(() => ({ isPaid: true }));
