@@ -69,16 +69,6 @@ const index: React.FC<MainCheckoutProps> = ({
 		}
 	};
 
-	const usdcxToSBTC = (usdcxAmount: number) => {
-		return usdcxAmount / sBTC_MOCK_DATA_PRICE; // e.g. $100 / $60000 = 0.00166667 sBTC
-	};
-
-	const convertsBTC = () => {
-		const sbtc_val = usdcxToSBTC(parseInt(quantity) * price as number);
-		console.log(sbtc_val);
-		setsBTCAmount(sbtc_val);
-	};
-
 	const requiredFieldFilledOnchain = async () => {
 		if (firstName != "" && firstName) {
 			if (lastName != "" && lastName) {
