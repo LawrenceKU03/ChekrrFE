@@ -137,10 +137,10 @@ const useStacksWallet = create<useStacksWalletProps>((set, get) => ({
 				name: "Chekrr",
 				icon: window.location.origin + "/favicon.ico",
 			},
-			onFinish: async (data) => {
+			onFinish: async () => {
 				toast.loading("Processing estimated 1-2 minutes", { duration: 5000 });
 
-				const res = await axios.post(
+				await axios.post(
 					"http://localhost:8000/payment/onchain_payment/",
 					{
 						amount: amount,
@@ -198,7 +198,7 @@ const useStacksWallet = create<useStacksWalletProps>((set, get) => ({
 			onFinish: async (data) => {
 				toast.loading("Processing estimated 1-2 minutes", { duration: 5000 });
 
-				const res = await axios.post(
+				await axios.post(
 					"http://localhost:8000/payment/onchain_payment/",
 					{
 						tx_id: data.txId, // 👈 also send txId so backend can verify

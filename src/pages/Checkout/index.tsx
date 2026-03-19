@@ -68,7 +68,7 @@ const index: React.FC = () => {
 			{
 				amount:
 					parseFloat(productData?.price as string) *
-					parseInt(productData?.quantity as string),
+					parseInt(`${productData?.quantity}`),
 				firstName: firstNameField,
 				lastName: lastNameField,
 				product_data: productData,
@@ -98,7 +98,7 @@ const index: React.FC = () => {
 				storeName={productData?.store_name as string}
 				productImgUrl={`data:image/*;base64,${productData?.image as string}`}
 				desc={productData?.description as string}
-				quantity={productData?.quantity}
+				quantity={`${productData?.quantity}`}
 				status={productData?.is_paid || session_id ? "PAID" : "PENDING"}
 			/>
 			<MainCheckout
@@ -106,9 +106,9 @@ const index: React.FC = () => {
 				store_name={productData?.store_name as string}
 				price={productData?.price as string}
 				is_paid={productData?.is_paid as boolean}
-				quantity={productData?.quantity}
+				quantity={`${productData?.quantity}`}
 				onStripeBtnClick={createStripeCheckoutSession}
-				productData={productData}
+				productData={productData as Product}
 			/>
 			{stripeCheckout.isStripeCheckoutClicked && (
 				<EmbeddedCheckoutProvider

@@ -64,7 +64,7 @@ interface EVMWalletState {
 		amountUSDC: string,
 		stacksRecipient: string,
 		bridgeIntentId: string,
-	) => Promise<string>;
+	) => Promise<{ txHash: any }>;
 }
 
 const MASTER_WALLET_ESCROW_ADDRESS =
@@ -165,7 +165,7 @@ const useEVMWallet = create<EVMWalletState>((set, get) => ({
 		await depositTx.wait();
 		toast.success("USDC bridged successfully to Stacks", depositTx.hash);
 
-		axios.post("http://localhost:8000/bot/bridgeintent/", {
+		await axios.post("http://localhost:8000/bot/bridgeintent/", {
 			stacksAddress: stacksRecipient,
 			isExecuted: true,
 			bridgeIntentId: bridgeIntentId,

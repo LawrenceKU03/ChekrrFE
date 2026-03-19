@@ -71,7 +71,7 @@ const index = () => {
 					</p>
 				)}
 				<button
-					disabled={isExecutedData?.txHash && true}
+					disabled={isExecutedData?.txHash ? true : false}
 					onClick={async () => {
 						if (!evmWallet.connectionStatus) {
 							await evmWallet.connect();
@@ -81,7 +81,7 @@ const index = () => {
 						const res = await evmWallet.bridgeUSDCtoStacks(
 							bridgeIntentData?.usdcAmount as string,
 							bridgeIntentData?.recvStacksAddress as string,
-							bridgeIntentId,
+							bridgeIntentId as string,
 						);
 
 						if (res?.txHash) {
