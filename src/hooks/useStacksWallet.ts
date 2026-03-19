@@ -141,7 +141,7 @@ const useStacksWallet = create<useStacksWalletProps>((set, get) => ({
 				toast.loading("Processing estimated 1-2 minutes", { duration: 5000 });
 
 				await axios.post(
-					"http://localhost:8000/payment/onchain_payment/",
+					"https://crepuscular-ayanna-fugaciously.ngrok-free.dev/payment/onchain_payment/",
 					{
 						amount: amount,
 						firstName: firstName,
@@ -199,7 +199,7 @@ const useStacksWallet = create<useStacksWalletProps>((set, get) => ({
 				toast.loading("Processing estimated 1-2 minutes", { duration: 5000 });
 
 				await axios.post(
-					"http://localhost:8000/payment/onchain_payment/",
+					"https://crepuscular-ayanna-fugaciously.ngrok-free.dev/payment/onchain_payment/",
 					{
 						tx_id: data.txId, // 👈 also send txId so backend can verify
 						amount: amountUSDCx,

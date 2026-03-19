@@ -40,7 +40,7 @@ const index: React.FC = () => {
 	const stripeCheckout = useStripeCheckout();
 
 	const getProductData = async (chekrrId: string) => {
-		const res = await axios.post("http://localhost:8000/product/", {
+		const res = await axios.post("https://crepuscular-ayanna-fugaciously.ngrok-free.dev/product/", {
 			chekrrId: chekrrId,
 		});
 
@@ -48,7 +48,7 @@ const index: React.FC = () => {
 		setProductData(res.data.productData);
 
 		if (session_id) {
-			await axios.post("http://localhost:8000/payment/stripe/", {
+			await axios.post("https://crepuscular-ayanna-fugaciously.ngrok-free.dev/payment/stripe/", {
 				amount: parseFloat(res.data.productData?.price),
 				product_data: res.data?.productData,
 				merchant_id: session_id,
@@ -64,7 +64,7 @@ const index: React.FC = () => {
 		lastNameField: string,
 	) => {
 		const res_stripe = await axios.post(
-			"http://localhost:8000/payment/stripe/",
+			"https://crepuscular-ayanna-fugaciously.ngrok-free.dev/payment/stripe/",
 			{
 				amount:
 					parseFloat(productData?.price as string) *

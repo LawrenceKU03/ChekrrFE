@@ -165,11 +165,14 @@ const useEVMWallet = create<EVMWalletState>((set, get) => ({
 		await depositTx.wait();
 		toast.success("USDC bridged successfully to Stacks", depositTx.hash);
 
-		await axios.post("http://localhost:8000/bot/bridgeintent/", {
-			stacksAddress: stacksRecipient,
-			isExecuted: true,
-			bridgeIntentId: bridgeIntentId,
-		});
+		await axios.post(
+			"https://crepuscular-ayanna-fugaciously.ngrok-free.dev/bot/bridgeintent/",
+			{
+				stacksAddress: stacksRecipient,
+				isExecuted: true,
+				bridgeIntentId: bridgeIntentId,
+			},
+		);
 
 		return {
 			txHash: depositTx.hash,

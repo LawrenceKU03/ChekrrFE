@@ -26,7 +26,7 @@ const index = () => {
 		useState<isExecutedDataType | null>(null);
 
 	const fetchBridgeIntentData = async () => {
-		const res = await axios.post("http://localhost:8000/bot/bridgeintent/", {
+		const res = await axios.post("https://crepuscular-ayanna-fugaciously.ngrok-free.dev/bot/bridgeintent/", {
 			bridgeIntentId: bridgeIntentId,
 		});
 		console.log(res);
